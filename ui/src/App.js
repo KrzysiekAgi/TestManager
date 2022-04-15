@@ -1,7 +1,11 @@
-import logo from './logo.svg';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component } from 'react'
+import Home from './Home';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import TestList from "./TestList";
+import TestEdit from './TestEdit';
+import { Button } from 'bootstrap';
 
 class App extends Component  {
     state = {
@@ -19,14 +23,24 @@ class App extends Component  {
         return (
             <div className="App">
             <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
             <div className="App-intro">
-            <h2>Tests:</h2>
-                {tests.map(test =>
-                    <div key={test.testName}>
-                        {test.testName} ({test.status})
-                    </div>
-                    )}
+            <table>
+                <tr>
+                    <th>Test Name</th>
+                    <th>Test Status</th>
+                </tr>
+            {tests.map((val, key) => {
+                return (
+                    <tr key={key}>
+                        <td>{val.testName}</td>
+                        <td>{val.status}</td>
+                    </tr>
+                )
+            })}
+            </table>
+            <button type="button">
+                Click Me
+            </button>
             </div>
             </header>
             </div>
