@@ -1,7 +1,7 @@
 package io.github.krzysiekagi.controller;
 
 import io.github.krzysiekagi.model.TestCase;
-import io.github.krzysiekagi.repository.TestCaseRepository;
+import io.github.krzysiekagi.service.TestCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,44 +11,45 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tests")
+@RequestMapping("/api")
 public class TestCaseController {
 
     @Autowired
-    private final TestCaseRepository testCaseRepository;
+    TestCaseService testCaseService;
 
-    public TestCaseController(TestCaseRepository testCaseRepository) {
-        this.testCaseRepository = testCaseRepository;
-        this.testCaseRepository.save(new TestCase("test1", "passing"));
+    public TestCaseController(TestCaseService testCaseService) {
+        this.testCaseService = testCaseService;
     }
 
-    @GetMapping
+    @GetMapping("/tests")
     public List<TestCase> getTestCases() {
-        return testCaseRepository.findAll();
+        return testCaseService.getTests();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/tests/{id}")
     public TestCase getTestCase(@PathVariable Long id) {
-        //TODO gracefully handle non-existing testcase
-        return testCaseRepository.findById(id).orElseThrow(RuntimeException::new);
+        return testCaseService.getTestById(id);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity changeTestCaseStatus(@PathVariable Long id, @RequestBody boolean passing) {
-        //TODO implement
-        throw new UnsupportedOperationException();
+    @PutMapping("/tests/{id}")
+    public ResponseEntity<String> changeTestCase(@PathVariable Long id, @RequestBody TestCase test) {
+        return ResponseEntity.ok(testCaseService.updateTest(id, test).toString());
     }
 
-    @PostMapping
-    public ResponseEntity createTestCase(@RequestBody TestCase testCase) throws URISyntaxException {
-        TestCase savedTestCase = testCaseRepository.save(testCase);
+    @PutMapping("/tests/{id}/status")
+    public ResponseEntity<String> changeTestStatus(@PathVariable Long id, @RequestBody String status) {
+        return ResponseEntity.ok(testCaseService.updateStatus(id, status).toString());
+    }
+
+    @PostMapping("/tests")
+    public ResponseEntity<?> createTestCase(@RequestBody String name) throws URISyntaxException {
+        TestCase savedTestCase = testCaseService.addTest(name);
         return ResponseEntity.created(new URI("/tests/" + savedTestCase.getId())).body(savedTestCase);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteTestCase(@PathVariable Long id) {
-        testCaseRepository.deleteById(id);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/tests/{id}")
+    public ResponseEntity<String> deleteTestCase(@PathVariable Long id) {
+        return ResponseEntity.ok().body(testCaseService.deleteTest(id));
     }
     
 }

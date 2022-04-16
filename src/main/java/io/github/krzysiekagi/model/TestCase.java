@@ -22,10 +22,19 @@ public class TestCase {
     private Long id;
 
     private String testName;
-    private String status; //TODO change to ENUM
+    private TestStatus status;
 
-    public TestCase(String testName, String status){
+    public TestCase(String testName){
         this.testName = testName;
-        this.status = status;
+        this.status = TestStatus.UNDEFINED;
+    }
+
+    @Override
+    public String toString() {
+        return "TestCase{" +
+                "id=" + id +
+                ", testName='" + testName + '\'' +
+                ", status='" + status + '\'' +
+                '}';
     }
 }
