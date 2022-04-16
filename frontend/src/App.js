@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import './App.css';
 import { Button, ButtonGroup, Container, FormGroup, Form, Input, Label, Table } from 'reactstrap';
 
+const headers = {
+  'Accept': 'application/json',
+  'Content-Type': 'application/json'
+}
 
 class App extends Component {
   
@@ -11,80 +15,71 @@ class App extends Component {
     this.remove = this.remove.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-}
+  }
 
-componentDidMount() {
+  componentDidMount() {
     this.setState({isLoading: true});
-
     fetch('/api/tests')
     .then(response => response.json())
     .then(data => this.setState({tests: data, isLoading: false}));
-}
+  }
 
-handleChange(event) {
+  handleChange(event) {
     this.setState({newTestName: event.target.value});
   }
 
-async handleSubmit(event) {
+  async handleSubmit(event) {
+    event.preventDefault();
     await fetch('/api/tests/', {
         method: 'POST',
         body: this.state.newTestName,
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-    }).then(res => {
-        let updatedTests = this.state.tests.push(res.json)
-        this.setState({tests: updatedTests});
+        headers: headers
+    })
+    .then(response => response.json())
+    .then(data => {
+      let updatedTests = [...this.state.tests, data];
+      this.setState({tests: updatedTests});
     });
-}
+  
+  }
 
-async remove(id) {
+  async remove(id) {
     await fetch(`/api/tests/${id}`, {
         method: 'DELETE',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
+        headers: headers
     }).then(() => {
         let updatedTests = [...this.state.tests].filter(i => i.id !== id);
         this.setState({tests: updatedTests});
     });
-}
+  }
 
-async markGreen(id) {
+  async markGreen(id) {
     await fetch(`/api/tests/${id}/status`, {
         method: 'PUT',
         body: "PASSING",
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
+        headers: headers
     }).then(() => {
         let updatedTests = [...this.state.tests]
             .filter(i => i.id === id)
             .map(i => i.status = "PASSING")
         this.setState({updatedTests});
     });
-}
+  }
 
-async markRed(id) {
+  async markRed(id) {
     await fetch(`/api/tests/${id}/status`, {
         method: 'PUT',
         body: "FAILING",
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
+        headers: headers
     }).then(() => {
         let updatedTests = [...this.state.tests]
             .filter(i => i.id === id)
             .map(i => i.status = "FAILING")
         this.setState({updatedTests});
     });
-}
+  }
 
-render () {
+  render () {
     const {tests, isLoading, newTestName} = this.state;
 
     if (isLoading) {
@@ -115,10 +110,10 @@ render () {
     return (
         <div>
             <Container fluid>
-                <Form>
+                <Form onSubmit={this.handleSubmit}>
                     <FormGroup id="c1">
                         <input onChange={this.handleChange.bind(this)} type="text" value={this.state.newTestName} placeholder="Test name"/>
-                        <button onClick={this.handleSubmit.bind(this)}>Add Test</button>  
+                        <button>Add Test</button>  
                     </FormGroup>
                 </Form>
                 <h3>Test Manager</h3>
@@ -135,6 +130,6 @@ render () {
             </Container>
         </div>
     );
-}
+  }
 }
 export default App;

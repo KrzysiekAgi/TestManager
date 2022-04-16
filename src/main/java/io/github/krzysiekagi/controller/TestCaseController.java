@@ -22,13 +22,13 @@ public class TestCaseController {
     }
 
     @GetMapping("/tests")
-    public List<TestCase> getTestCases() {
-        return testCaseService.getTests();
+    public ResponseEntity<List<TestCase>> getTestCases() {
+        return ResponseEntity.ok().body(testCaseService.getTests());
     }
 
     @GetMapping("/tests/{id}")
-    public TestCase getTestCase(@PathVariable Long id) {
-        return testCaseService.getTestById(id);
+    public ResponseEntity<TestCase> getTestCase(@PathVariable Long id) {
+        return ResponseEntity.ok().body(testCaseService.getTestById(id));
     }
 
     @PutMapping("/tests/{id}")
