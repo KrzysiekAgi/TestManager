@@ -38,7 +38,7 @@ class App extends Component {
     .then(response => response.json())
     .then(data => {
       let updatedTests = [...this.state.tests, data];
-      this.setState({tests: updatedTests});
+      this.setState({tests: updatedTests, newTestName: ""});
     });
   
   }
