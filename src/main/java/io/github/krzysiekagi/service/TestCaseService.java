@@ -30,8 +30,12 @@ public class TestCaseService {
 
     public TestCase updateStatus(Long id, String status) {
         TestCase updatedTest = testCaseRepository.findById(id).orElseThrow(TestNotFoundException::new);
-        //TODO change it to handle enums better
-        updatedTest.setStatus(TestStatus.valueOf(status.toUpperCase()));
+        try {
+            updatedTest.setStatus(TestStatus.valueOf(status.toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            //TBD: this theoretically allows for coming back to undefined state
+            updatedTest.setStatus(TestStatus.UNDEFINED);
+        }
         return testCaseRepository.save(updatedTest);
     }
 
