@@ -43,12 +43,12 @@ public class TestCaseService {
         return testCaseRepository.save(updatedTest);
     }
 
-    public TestCase updateTest(Long id, TestCase test) {
+    public TestCase updateTestName(Long id, String testName) {
         TestCase updatedTest = testCaseRepository.findById(id).orElseThrow(() -> new TestNotFoundException(id));
         logger.info("Updating test {}", id);
-        if (isTestNameValid(test.getTestName()))
-            updatedTest.setTestName(test.getTestName());
-        else throw new InvalidTestNameException(test.getTestName());
+        if (isTestNameValid(testName))
+            updatedTest.setTestName(testName);
+        else throw new InvalidTestNameException(testName);
         return testCaseRepository.save(updatedTest);
     }
 

@@ -31,14 +31,14 @@ public class TestCaseController {
         return ResponseEntity.ok().body(testCaseService.getTestById(id));
     }
 
-    @PutMapping("/tests/{id}")
-    public ResponseEntity<String> changeTestCase(@PathVariable Long id, @RequestBody TestCase test) {
-        return ResponseEntity.ok(testCaseService.updateTest(id, test).toString());
-    }
-
     @PutMapping("/tests/{id}/status")
     public ResponseEntity<String> changeTestStatus(@PathVariable Long id, @RequestBody String status) {
         return ResponseEntity.ok(testCaseService.updateStatus(id, status).toString());
+    }
+
+    @PutMapping("/tests/{id}/name")
+    public ResponseEntity<String> changeTestName(@PathVariable Long id, @RequestBody String name) {
+        return ResponseEntity.ok(testCaseService.updateTestName(id, name).toString());
     }
 
     @PostMapping("/tests")

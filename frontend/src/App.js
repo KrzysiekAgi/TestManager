@@ -15,8 +15,10 @@ class App extends Component {
     super(props);
     this.state = {tests: [], isLoading: true, newTestName: "", renamedTest: ""};
     this.remove = this.remove.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleNewTestNameChange = this.handleNewTestNameChange.bind(this);
+    this.addTest = this.addTest.bind(this);
+    this.renameTest = this.renameTest.bind(this);
+    this.handleTestRename = this.handleTestRename.bind(this);
   }
 
   componentDidMount() {
@@ -26,22 +28,13 @@ class App extends Component {
     .then(data => this.setState({tests: data, isLoading: false}));
   }
 
-  handleChange(event) {
+  handleNewTestNameChange(event) {
     this.setState({newTestName: event.target.value});
   }
 
-  async handleSubmit(event) {
+  async addTest(event) {
     event.preventDefault();
-    if (this.state.newTestName.trim() == "") {
-        toast.info("Cannot add a test without a name", 
-            {position: toast.POSITION.BOTTOM_RIGHT});
-        return;
-    }
-    if (this.state.tests.filter(t => t.testName === this.state.newTestName).length !== 0) {
-        toast.info("Cannot add two tests with the same name", 
-            {position: toast.POSITION.BOTTOM_RIGHT});
-        return;
-    }
+   if (this.isTestNameValid(this.state.newTestName)) {
     await fetch('/api/tests/', {
         method: 'POST',
         body: this.state.newTestName,
@@ -52,6 +45,29 @@ class App extends Component {
       let updatedTests = [...this.state.tests, data];
       this.setState({tests: updatedTests, newTestName: ""});
     });
+   }
+  }
+
+  handleTestRename(event) {
+      this.setState({renamedTest: event.target.value})
+  }
+
+  async renameTest(id) {
+    if (this.isTestNameValid(this.state.renamedTest)) {
+        console.log(this.state.renamedTest)
+        await fetch(`/api/tests/${id}/name`, {
+            method: 'PUT',
+            body: this.state.renamedTest,
+            headers: headers
+        }).then(() => {
+            let updatedTests = [...this.state.tests]
+                .filter(i => i.id === id)
+                .map(i => {
+                    i.testName = this.state.renamedTest
+                })
+                this.setState({updatedTests, renamedTest: ""});
+        })
+    }     
   }
 
   async remove(id) {
@@ -90,8 +106,21 @@ class App extends Component {
     });
   }
 
+  isTestNameValid(name) {
+    if (name.trim() == "") {
+        toast.info("Cannot have a test with empty name", 
+            {position: toast.POSITION.BOTTOM_RIGHT});
+        return false;
+    }
+    else if (this.state.tests.filter(t => t.testName === name).length !== 0) {
+        toast.info("There already is a test with that name", 
+            {position: toast.POSITION.BOTTOM_RIGHT});
+        return false;
+    } else return true;
+  }
+
   render () {
-    const {tests, isLoading, newTestName} = this.state;
+    const {tests, isLoading} = this.state;
     toast.configure();
 
     if (isLoading) {
@@ -116,15 +145,24 @@ class App extends Component {
                         onClick={() => this.remove(test.id)}>Delete</Button>
                 </ButtonGroup>
             </td>
+            <td>
+                    <FormGroup id="c1">
+                        <input onChange={this.handleTestRename.bind(this)} type="text" value={test.tempName} placeholder="New name"/>
+                        <Button size='sm' color='secondary' 
+                            onClick={() => this.renameTest(test.id)}>Rename Test
+                        </Button>
+                    </FormGroup>
+                    
+            </td>
         </tr>
     });
 
     return (
         <div>
             <Container fluid>
-                <Form onSubmit={this.handleSubmit}>
+                <Form onSubmit={this.addTest}>
                     <FormGroup id="c1">
-                        <input onChange={this.handleChange.bind(this)} type="text" value={this.state.newTestName} placeholder="Test name"/>
+                        <input onChange={this.handleNewTestNameChange.bind(this)} type="text" value={this.state.newTestName} placeholder="Test name"/>
                         <button>Add Test</button>  
                     </FormGroup>
                 </Form>
