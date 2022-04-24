@@ -4,6 +4,7 @@ import { Button, ButtonGroup, Container, FormGroup, Form, Table } from 'reactstr
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import TestStatus from './TestStatus';
+import { isTestNameValid } from './utils';
 
 const headers = {
   'Accept': 'application/json',
@@ -39,7 +40,7 @@ class App extends Component {
 
   async addTest(event) {
     event.preventDefault();
-   if (this.isTestNameValid(this.state.newTestName)) {
+   if (isTestNameValid(this.state.newTestName, this.state.tests)) {
     await fetch('/api/tests/', {
         method: 'POST',
         body: this.state.newTestName,
@@ -58,7 +59,7 @@ class App extends Component {
   }
 
   async renameTest(id) {
-    if (this.isTestNameValid(this.state.renamedTest)) {
+    if (isTestNameValid(this.state.renamedTest, this.state.tests)) {
         await fetch(`/api/tests/${id}/name`, {
             method: 'PUT',
             body: this.state.renamedTest,
@@ -80,19 +81,6 @@ class App extends Component {
         let updatedTests = [...this.state.tests].filter(i => i.id !== id);
         this.setState({tests: updatedTests});
     });
-  }
-
-  isTestNameValid(name) {
-    if (name.trim() == "") {
-        toast.info("Cannot have a test with empty name", 
-            {position: toast.POSITION.BOTTOM_RIGHT});
-        return false;
-    }
-    else if (this.state.tests.filter(t => t.testName === name).length !== 0) {
-        toast.info("There already is a test with that name", 
-            {position: toast.POSITION.BOTTOM_RIGHT});
-        return false;
-    } else return true;
   }
 
   render () {
