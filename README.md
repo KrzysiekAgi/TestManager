@@ -13,6 +13,6 @@ Implemented:
 - Add test
 - Delete test
 - Change status between passing and failing
-- Change test name (only via api)
+- Change test name
 - Test name validation
 - Accepting only allowed statuses
