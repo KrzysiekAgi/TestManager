@@ -3,6 +3,7 @@ import './App.css';
 import { Button, ButtonGroup, Container, FormGroup, Form, Table } from 'reactstrap';
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import TestStatus from './TestStatus';
 
 const headers = {
   'Accept': 'application/json',
@@ -19,6 +20,10 @@ class App extends Component {
     this.addTest = this.addTest.bind(this);
     this.renameTest = this.renameTest.bind(this);
     this.handleTestRename = this.handleTestRename.bind(this);
+  }
+
+  testStatusCallbackFunction = () => {
+      this.setState({tests: [...this.state.tests]})
   }
 
   componentDidMount() {
@@ -54,7 +59,6 @@ class App extends Component {
 
   async renameTest(id) {
     if (this.isTestNameValid(this.state.renamedTest)) {
-        console.log(this.state.renamedTest)
         await fetch(`/api/tests/${id}/name`, {
             method: 'PUT',
             body: this.state.renamedTest,
@@ -62,12 +66,10 @@ class App extends Component {
         }).then(() => {
             let updatedTests = [...this.state.tests]
                 .filter(i => i.id === id)
-                .map(i => {
-                    i.testName = this.state.renamedTest
-                })
+                .map(i => i.testName = this.state.renamedTest)
                 this.setState({updatedTests, renamedTest: ""});
         })
-    }     
+    } 
   }
 
   async remove(id) {
@@ -77,32 +79,6 @@ class App extends Component {
     }).then(() => {
         let updatedTests = [...this.state.tests].filter(i => i.id !== id);
         this.setState({tests: updatedTests});
-    });
-  }
-
-  async markGreen(id) {
-    await fetch(`/api/tests/${id}/status`, {
-        method: 'PUT',
-        body: "PASSING",
-        headers: headers
-    }).then(() => {
-        let updatedTests = [...this.state.tests]
-            .filter(i => i.id === id)
-            .map(i => i.status = "PASSING")
-        this.setState({updatedTests});
-    });
-  }
-
-  async markRed(id) {
-    await fetch(`/api/tests/${id}/status`, {
-        method: 'PUT',
-        body: "FAILING",
-        headers: headers
-    }).then(() => {
-        let updatedTests = [...this.state.tests]
-            .filter(i => i.id === id)
-            .map(i => i.status = "FAILING")
-        this.setState({updatedTests});
     });
   }
 
@@ -132,12 +108,7 @@ class App extends Component {
             <td style={{whiteSpace: 'nowrap'}}>{test.testName}</td>
             <td>{test.status}</td>
             <td>
-                <ButtonGroup>
-                    <Button size='sm' color='success' 
-                        onClick={() => this.markGreen(test.id)}>Pass</Button>
-                    <Button size='sm' color='danger' 
-                        onClick={() => this.markRed(test.id)}>Fail</Button>
-                </ButtonGroup>
+                <TestStatus test={test} callback={this.testStatusCallbackFunction}/>
             </td>
             <td>
                 <ButtonGroup>
@@ -146,13 +117,12 @@ class App extends Component {
                 </ButtonGroup>
             </td>
             <td>
-                    <FormGroup id="c1">
-                        <input onChange={this.handleTestRename.bind(this)} type="text" value={test.tempName} placeholder="New name"/>
-                        <Button size='sm' color='secondary' 
-                            onClick={() => this.renameTest(test.id)}>Rename Test
-                        </Button>
-                    </FormGroup>
-                    
+                <FormGroup id="c1">
+                    <input onChange={this.handleTestRename.bind(this)} type="text" value={test.tempName} placeholder="New name"/>
+                    <Button size='sm' color='secondary' 
+                        onClick={() => this.renameTest(test.id)}>Rename Test
+                    </Button>
+                </FormGroup>
             </td>
         </tr>
     });
