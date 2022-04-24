@@ -11,7 +11,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 public class TestCaseController {
 
     @Autowired

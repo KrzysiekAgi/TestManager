@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
-import { Button, ButtonGroup, Container, FormGroup, Form, Input, Label, Table } from 'reactstrap';
+import { Button, ButtonGroup, Container, FormGroup, Form, Table } from 'reactstrap';
+import {toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const headers = {
   'Accept': 'application/json',
@@ -8,10 +10,10 @@ const headers = {
 }
 
 class App extends Component {
-  
+
   constructor(props) {
     super(props);
-    this.state = {tests: [], isLoading: true, newTestName: ""};
+    this.state = {tests: [], isLoading: true, newTestName: "", renamedTest: ""};
     this.remove = this.remove.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -30,6 +32,16 @@ class App extends Component {
 
   async handleSubmit(event) {
     event.preventDefault();
+    if (this.state.newTestName.trim() == "") {
+        toast.info("Cannot add a test without a name", 
+            {position: toast.POSITION.BOTTOM_RIGHT});
+        return;
+    }
+    if (this.state.tests.filter(t => t.testName === this.state.newTestName).length !== 0) {
+        toast.info("Cannot add two tests with the same name", 
+            {position: toast.POSITION.BOTTOM_RIGHT});
+        return;
+    }
     await fetch('/api/tests/', {
         method: 'POST',
         body: this.state.newTestName,
@@ -40,7 +52,6 @@ class App extends Component {
       let updatedTests = [...this.state.tests, data];
       this.setState({tests: updatedTests, newTestName: ""});
     });
-  
   }
 
   async remove(id) {
@@ -81,6 +92,7 @@ class App extends Component {
 
   render () {
     const {tests, isLoading, newTestName} = this.state;
+    toast.configure();
 
     if (isLoading) {
         return <p>Loading...</p>;
