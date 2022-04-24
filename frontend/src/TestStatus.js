@@ -46,4 +46,4 @@ class TestStatus extends Component {
 
     }
 
-}export default TestStatus;
+} export default TestStatus;

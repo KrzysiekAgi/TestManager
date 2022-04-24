@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import './App.css';
-import { Button, ButtonGroup, Container, FormGroup, Form, Table } from 'reactstrap';
+import { Button, ButtonGroup, Container, FormGroup, Form } from 'reactstrap';
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import TestStatus from './TestStatus';
 import { isTestNameValid } from './utils';
+import TestList from './TestList';
 
 const headers = {
   'Accept': 'application/json',
@@ -125,16 +126,7 @@ class App extends Component {
                     </FormGroup>
                 </Form>
                 <h3>Test Manager</h3>
-                <Table className='mt-4'>
-                    <thead>
-                        <tr>
-                            <th>Test Name</th>
-                            <th>Test Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>{testsList}</tbody>
-                </Table>
+                <TestList testsList={testsList} />
             </Container>
         </div>
     );
