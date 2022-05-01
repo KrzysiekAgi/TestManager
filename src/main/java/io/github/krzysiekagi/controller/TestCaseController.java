@@ -32,13 +32,13 @@ public class TestCaseController {
     }
 
     @PutMapping("/tests/{id}/status")
-    public ResponseEntity<String> changeTestStatus(@PathVariable Long id, @RequestBody String status) {
-        return ResponseEntity.ok(testCaseService.updateStatus(id, status).toString());
+    public ResponseEntity<TestCase> changeTestStatus(@PathVariable Long id, @RequestBody String status) {
+        return ResponseEntity.ok().body(testCaseService.updateStatus(id, status));
     }
 
     @PutMapping("/tests/{id}/name")
-    public ResponseEntity<String> changeTestName(@PathVariable Long id, @RequestBody String name) {
-        return ResponseEntity.ok(testCaseService.updateTestName(id, name).toString());
+    public ResponseEntity<TestCase> changeTestName(@PathVariable Long id, @RequestBody String name) {
+        return ResponseEntity.ok().body(testCaseService.updateTestName(id, name));
     }
 
     @PostMapping("/tests")
