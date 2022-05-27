@@ -6,16 +6,15 @@ import javax.persistence.*;
 
 @Entity
 @Data
-public class TestStep {
+public class TestHistory {
 
     @Id
     @GeneratedValue
-    private Long testStepId;
+    private Long testHistoryId;
 
     @ManyToOne
     @JoinColumn(name="id")
     private TestCase testCase;
 
-    private String name;
-    private String description;
+
 }
