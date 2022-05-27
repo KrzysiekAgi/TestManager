@@ -1,24 +1,21 @@
 package io.github.krzysiekagi.model.domain;
 
 import lombok.Data;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "Steps")
 @Data
-@RequiredArgsConstructor
 public class TestStep {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private Long testStepId;
 
-    @NonNull
-    private String stepName;
+    @ManyToOne
+    @JoinColumn(name="testCaseId")
+    private TestCase testCase;
+
+    private String name;
+    private String description;
 }
