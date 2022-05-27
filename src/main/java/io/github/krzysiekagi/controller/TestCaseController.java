@@ -1,6 +1,6 @@
 package io.github.krzysiekagi.controller;
 
-import io.github.krzysiekagi.model.TestCase;
+import io.github.krzysiekagi.model.domain.TestCase;
 import io.github.krzysiekagi.service.TestCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

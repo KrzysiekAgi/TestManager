@@ -1,10 +1,10 @@
 package io.github.krzysiekagi.service;
 
 import io.github.krzysiekagi.exception.InvalidTestNameException;
-import io.github.krzysiekagi.model.TestCase;
+import io.github.krzysiekagi.model.domain.TestCase;
 import io.github.krzysiekagi.exception.TestNotFoundException;
-import io.github.krzysiekagi.model.TestStatus;
-import io.github.krzysiekagi.repository.TestCaseRepository;
+import io.github.krzysiekagi.model.domain.TestStatus;
+import io.github.krzysiekagi.model.TestCaseRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

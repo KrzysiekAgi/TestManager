@@ -1,4 +1,4 @@
-package io.github.krzysiekagi.model;
+package io.github.krzysiekagi.model.domain;
 
 public enum TestStatus {
     UNDEFINED,

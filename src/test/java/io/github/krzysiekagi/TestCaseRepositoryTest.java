@@ -1,8 +1,8 @@
 package io.github.krzysiekagi;
 
-import io.github.krzysiekagi.model.TestCase;
-import io.github.krzysiekagi.model.TestStatus;
-import io.github.krzysiekagi.repository.TestCaseRepository;
+import io.github.krzysiekagi.model.domain.TestCase;
+import io.github.krzysiekagi.model.domain.TestStatus;
+import io.github.krzysiekagi.model.TestCaseRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
